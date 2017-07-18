@@ -25,8 +25,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 void ConfigManager_Init (void);
 void Config_QuitSave(void);
 void ResetBinds(void);
+void Config_ExecIfExists(char* filename);
 
 extern cvar_t	cfg_save_unchanged, cfg_legacy_exec;
+
+// Defined in order of execution
+#define PACKAGE_CONFIG_FILENAME "configs/__package.cfg"   // package configuration (e.g. nQuake)
+#define PLATFORM_CONFIG_FILENAME "configs/__platform.cfg" // platform configuration (e.g. Linux-specific settings)
+#define PRESET_CONFIG_FILENAME "configs/__preset.cfg"     // preset configuration (e.g. auto-generated per-user settings)
+#define GLOBAL_CONFIG_FILENAME "configs/__global.cfg"     // per-user configuration (executed per-mod)
+#define DEFAULT_CONFIG_FILENAME "default.cfg"             // default per-mod configuration
+#define AUTOEXEC_CONFIG_FILENAME "autoexec.cfg"           // per-user configuration (executed per-mod)
+#define STARTUP_CONFIG_FILENAME "configs/__startup.cfg"   // startup configuration (e.g. welcome message)
 
 #define MAIN_GL_CONFIG_FILENAME "config.cfg"
 #define MAIN_SW_CONFIG_FILENAME "configsw.cfg"

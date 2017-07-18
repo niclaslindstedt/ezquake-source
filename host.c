@@ -682,10 +682,13 @@ void Host_Init (int argc, char **argv, int default_memsize)
 	Com_Printf("\n");
 	Com_Printf("Type /help to access the manual.\nUse /describe for help on commands.\n\n", VersionString());
 
-	if ((vf = FS_OpenVFS("autoexec.cfg", "rb", FS_ANY))) {
-		Cbuf_AddText ("exec autoexec.cfg\n\n");
-		VFS_CLOSE(vf);
-	}
+	Config_ExecIfExists(PACKAGE_CONFIG_FILENAME);
+	Config_ExecIfExists(PLATFORM_CONFIG_FILENAME);
+	Config_ExecIfExists(PRESET_CONFIG_FILENAME);
+	Config_ExecIfExists(GLOBAL_CONFIG_FILENAME);
+	Config_ExecIfExists(DEFAULT_CONFIG_FILENAME);
+	Config_ExecIfExists(AUTOEXEC_CONFIG_FILENAME);
+	Config_ExecIfExists(STARTUP_CONFIG_FILENAME);
 
 	Cmd_StuffCmds_f ();		// process command line arguments
 	Cbuf_AddText ("cl_warncmd 1\n");

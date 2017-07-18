@@ -749,10 +749,22 @@ static void Config_PrintPreamble(FILE *f)
 
 /************************************ MAIN FUCTIONS	************************************/
 
-static void ResetConfigs(qbool resetall, qbool read_legacy_configs)
+#define MAX_CONFIG_FILENAME_LENGTH 32
+void Config_ExecIfExists(char *filename)
 {
 	vfsfile_t *v;
+	if ((v = FS_OpenVFS(filename, "rb", FS_ANY))) {
+		char cmdexec[MAX_CONFIG_FILENAME_LENGTH] = { 0 };
+		strcpy(cmdexec, "exec ");
+		strlcat(cmdexec, filename, MAX_CONFIG_FILENAME_LENGTH);
+		strlcat(cmdexec, "\n", MAX_CONFIG_FILENAME_LENGTH);
+		Cbuf_AddText(cmdexec);
+		VFS_CLOSE(v);
+	}
+}
 
+static void ResetConfigs(qbool resetall, qbool read_legacy_configs)
+{
 	ResetVariables(CVAR_SERVERINFO, !resetall);
 	DeleteUserAliases();
 	DeleteUserVariables();
@@ -764,10 +776,12 @@ static void ResetConfigs(qbool resetall, qbool read_legacy_configs)
 	if (read_legacy_configs)
 	{
 		Cbuf_AddText ("cl_warncmd 0\n");
-		if ((v = FS_OpenVFS("autoexec.cfg", "rb", FS_ANY))) {
-			Cbuf_AddText ("exec autoexec.cfg\n");
-			VFS_CLOSE(v);
-		}
+		Config_ExecIfExists(PACKAGE_CONFIG_FILENAME);
+		Config_ExecIfExists(PLATFORM_CONFIG_FILENAME);
+		Config_ExecIfExists(PRESET_CONFIG_FILENAME);
+		Config_ExecIfExists(GLOBAL_CONFIG_FILENAME);
+		Config_ExecIfExists(DEFAULT_CONFIG_FILENAME);
+		Config_ExecIfExists(AUTOEXEC_CONFIG_FILENAME);
 		Cbuf_AddText ("cl_warncmd 1\n");
 	}
 }
